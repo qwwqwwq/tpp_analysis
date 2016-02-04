@@ -1,0 +1,59 @@
+import pandas
+pandas.read_csv("TPP-Final-Text-US-Tariff-Elimination-Schedule.csv")
+a = pandas.read_csv("TPP-Final-Text-US-Tariff-Elimination-Schedule.csv")
+a.Notes
+a.Notes.value_counts()
+ls
+vi clean_data.py
+a.names
+a.names()
+a.keys()
+a['Australia'].value_counts()
+a['Base Rate'].value_counts()
+a
+a['Base Rate'].value_counts()
+a
+a.keys()
+a[[u'Australia', u'Brunei',
+       u'Canada', u'Chile', u'Japan', u'Malaysia', u'Mexico', u'New Zealand',
+       u'Peru', u'Singapore', u'Vietnam']]
+a[[u'Australia', u'Brunei',
+       u'Canada', u'Chile', u'Japan', u'Malaysia', u'Mexico', u'New Zealand',
+       u'Peru', u'Singapore', u'Vietnam']].apply(lambda x: sum([y=='EIF' for y in x.tolist()]))
+a[[u'Australia', u'Brunei',
+       u'Canada', u'Chile', u'Japan', u'Malaysia', u'Mexico', u'New Zealand',
+       u'Peru', u'Singapore', u'Vietnam']].apply(lambda x: sum([y=='EIF' for y in x.tolist()]), axis=1)
+a[[u'Australia', u'Brunei',
+       u'Canada', u'Chile', u'Japan', u'Malaysia', u'Mexico', u'New Zealand',
+       u'Peru', u'Singapore', u'Vietnam']].apply(lambda x: sum([y=='EIF' for y in x.tolist()]), axis=1).min()
+a[[u'Australia', u'Brunei',
+       u'Canada', u'Chile', u'Japan', u'Malaysia', u'Mexico', u'New Zealand',
+       u'Peru', u'Singapore', u'Vietnam']].apply(lambda x: sum([y=='EIF' for y in x.tolist()]), axis=1).minidx()
+a[[u'Australia', u'Brunei',
+       u'Canada', u'Chile', u'Japan', u'Malaysia', u'Mexico', u'New Zealand',
+       u'Peru', u'Singapore', u'Vietnam']].apply(lambda x: sum([y=='EIF' for y in x.tolist()]), axis=1)
+series = a[[u'Australia', u'Brunei',
+       u'Canada', u'Chile', u'Japan', u'Malaysia', u'Mexico', u'New Zealand',
+       u'Peru', u'Singapore', u'Vietnam']].apply(lambda x: sum([y=='EIF' for y in x.tolist()]), axis=1)
+series.idxmin
+series.idxmin()
+df.ix[1072]
+a.ix[1072]
+series = a[[u'Australia', u'Brunei',
+       u'Canada', u'Chile', u'Japan', u'Malaysia', u'Mexico', u'New Zealand',
+       u'Peru', u'Singapore', u'Vietnam']].apply(lambda x: x.nunique()), axis=1)
+series = a[[u'Australia', u'Brunei',
+       u'Canada', u'Chile', u'Japan', u'Malaysia', u'Mexico', u'New Zealand',
+       u'Peru', u'Singapore', u'Vietnam']].apply(lambda x: x.nunique(), axis=1)
+series.maxidx
+series.idxmax()
+a.ix[7514]
+series
+series.describe
+series.describe()
+series.value_counts()
+series[series == 9]
+series[series == 9].index
+a.ix[series[series == 9].index]
+
+# http://www.cato.org/blog/sugar-tpp
