@@ -1,0 +1,26 @@
+rect {
+    fill: none;
+    pointer-events: all;
+}
+
+.sphere {
+    fill: none;
+    stroke: #ccc;
+    shape-rendering: crispEdges;
+}
+
+.graticule {
+    fill: none;
+    stroke: #777;
+    stroke-opacity: .2;
+}
+
+.mesh {
+    stroke: #000;
+}
+
+.boundary {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2px;
+}
