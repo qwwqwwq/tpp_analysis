@@ -19,6 +19,10 @@ rect {
     stroke: #000;
 }
 
+.selected {
+    fill: #fffd46;
+}
+
 .boundary {
     fill: none;
     stroke: #fff;

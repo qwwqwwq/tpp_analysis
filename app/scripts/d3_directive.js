@@ -37,23 +37,34 @@ angular.module('d3Directives').directive(
                         .attr("class", "sphere")
                         .attr("d", path);
 
-                    svg.on("click", function() {
-                        console.log(projection.invert(d3.mouse(this)));
-                    });
-
                     svg.append("g")
                         .selectAll("path")
                         .data(topojson.feature(world, world.objects.countries).features)
                         .enter()
                         .append("path")
                         .attr("class", "mesh")
-                        .attr("fill", "#000000")
+                        .attr("id", function(d, i) {
+                            return d.properties.name.replace(/\s/g, '');
+                        })
+                        .on("click", function(d, i) {
+                            console.log(d.properties.name);
+                            markSelected(d.properties.name);
+                        })
                         .attr("d", path);
 
                     svg.insert("path", ".graticule")
                         .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
                         .attr("class", "boundary")
                         .attr("d", path);
+                }
+
+                function markSelected(countryName) {
+                    var element = d3.select('#' + countryName.replace(/\s/g, ''));
+                    if (element.classed('selected')) {
+                        element.classed('selected', false);
+                    } else {
+                        element.classed('selected', true);
+                    }
                 }
 
 
