@@ -48,6 +48,7 @@ angular.module('d3Directives').directive(
                         })
                         .on("click", function(d, i) {
                             console.log(d.properties.name);
+                            console.log(d3.geo.path().bounds(d));
                             markSelected(d.properties.name);
                         })
                         .attr("d", path);
@@ -65,6 +66,7 @@ angular.module('d3Directives').directive(
                     } else {
                         element.classed('selected', true);
                     }
+                    console.log(element);
                 }
 
 
