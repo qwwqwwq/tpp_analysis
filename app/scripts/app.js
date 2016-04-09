@@ -3,9 +3,10 @@
 angular.module('d3', []);
 angular.module('topojson', []);
 angular.module('queue', []);
+angular.module('shapeConnector', []);
 angular.module('data', ['d3', 'queue']);
 angular.module('tppProjection', ['d3']);
-angular.module('d3Directives', ['d3', 'queue', 'topojson', 'ui.bootstrap', 'data', 'tppProjection']);
+angular.module('d3Directives', ['d3', 'queue', 'topojson', 'ui.bootstrap', 'data', 'tppProjection', 'shapeConnector']);
 
 var App = angular.module('App', ['d3Directives', 'ngRoute', 'ui.bootstrap'])
     .config(['$routeProvider', function ($routeProvider) {

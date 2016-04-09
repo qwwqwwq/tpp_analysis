@@ -19,6 +19,11 @@ rect {
     stroke: #000;
 }
 
+.connector {
+    stroke: #000;
+    fill: none;
+}
+
 .selected {
     fill: #fffd46;
 }
