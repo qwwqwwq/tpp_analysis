@@ -100,7 +100,6 @@
             function choosePoints(shapeCentroid,
                                   shapePoints,
                                   connectorCentroid) {
-                var slope = getParallelSlope(shapeCentroid, connectorCentroid);
                 var closestLeftIdx = -1,
                     closestLeftScore = Infinity,
                     closestRightIdx = -1,

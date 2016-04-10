@@ -102,7 +102,7 @@ angular.module('d3Directives').directive(
                 });
 
                 queue()
-                    .defer(d3.json, "static/tpp-50m.json")
+                    .defer(d3.json, "static/test.json")
                     .awaitAll(ready);
 
                 function ready(error, data) {
