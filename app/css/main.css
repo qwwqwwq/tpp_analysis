@@ -24,6 +24,16 @@ rect {
     fill: none;
 }
 
+.bbox {
+    stroke: #ff1a1c;
+    fill: none;
+}
+
+.dot {
+    fill: #ff1a1c;
+    stroke: #ff1a1c;
+}
+
 .selected {
     fill: #fffd46;
 }

@@ -47,13 +47,11 @@ angular.module('d3Directives').directive(
                         .enter()
                         .append("path")
                         .attr("class", "mesh")
-                        .attr("id", function(d, i) {
+                        /*.attr("id", function(d, i) {
                             return d.properties.name.replace(/\s/g, '');
-                        })
+                        })*/
                         .on("click", function(d, i) {
-                            console.log(d.properties.name);
-                            console.log(d3.geo.path().bounds(d));
-                            markSelected(d.properties.name, getCentroid(d));
+                            markSelected(d3.select(this));
                         })
                         .attr("d", path);
 
@@ -76,20 +74,49 @@ angular.module('d3Directives').directive(
                     return {x: bounds[0][0] + bounds[1][0]/2, y: bounds[0][1] + bounds[1][1]/2};
                 }
 
-                function markSelected(countryName, centroid) {
-                    var element = d3.select('#' + countryName.replace(/\s/g, ''));
+                function markSelected(element) {
+                    //var element = d3.select('#' + countryName.replace(/\s/g, ''));
                     if (select1 === null) {
                         select1 = element;
                     } else if (select2 === null) {
                         select2 = element;
                         d3.select("svg")
                             .append("path")
-                            .attr("d", shapeConnector(center, select1[0][0], select2[0][0]))
+                            .attr("d", shapeConnector.shapeConnector(center, select1[0][0], select2[0][0]))
                             .attr("class", "connector");
+
+                        d3.select("svg")
+                            .append("path")
+                            .attr("d", shapeConnector.getBoundingBox(select1[0][0]))
+                            .attr("class", "bbox");
+
+                        d3.select("svg")
+                            .append("path")
+                            .attr("d", shapeConnector.getBoundingBox(select2[0][0]))
+                            .attr("class", "bbox");
+
+
+                        var center1 = shapeConnector.getBoundingCenter(select1[0][0]);
+                        d3.select("svg")
+                            .append("circle")
+                            .attr("r", "5")
+                            .attr("cx", center1.x)
+                            .attr("cy", center1.y)
+                            .attr("class", "dot");
+
+                        var center2 = shapeConnector.getBoundingCenter(select2[0][0]);
+                        d3.select("svg")
+                            .append("circle")
+                            .attr("r", "5")
+                            .attr("cx", center2.x)
+                            .attr("cy", center2.y)
+                            .attr("class", "dot");
                     } else {
                         select1.classed('selected', false);
                         select2.classed('selected', false);
                         d3.selectAll(".connector").remove();
+                        d3.selectAll(".bbox").remove();
+                        d3.selectAll(".dot").remove();
                         select2 = null;
                         select1 = element;
                     }

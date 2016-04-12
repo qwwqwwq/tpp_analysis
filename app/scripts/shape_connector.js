@@ -9,11 +9,6 @@
                 var pathACentroid = getBoundingCenter(pathA);
                 var pathBCentroid = getBoundingCenter(pathB);
 
-                console.log(pathA);
-                console.log(pathB);
-                console.log(pathACentroid);
-                console.log(pathBCentroid);
-
                 pointsA = choosePoints(pathACentroid,
                     getPoints(pathA),
                     connectorCentroid);
@@ -39,12 +34,12 @@
 
                 return "M" + pathPoint(minorA) +
                     "C" + pathPoint(halfwayPoint(minorA, connectorCentroid))
-                        + pathPoint(halfwayPoint(minorB, connectorCentroid))
-                        + pathPoint(minorB) +
+                    + pathPoint(halfwayPoint(minorB, connectorCentroid))
+                    + pathPoint(minorB) +
                     "L" + pathPoint(majorB) +
                     "C" + pathPoint(connectorCentroid)
-                        + pathPoint(connectorCentroid)
-                        + pathPoint(majorA) + "Z";
+                    + pathPoint(connectorCentroid)
+                    + pathPoint(majorA) + "Z";
             }
 
             function pathPoint(p) {
@@ -71,7 +66,7 @@
                 return points;
             }
 
-            function getBoundingCenter(path) {
+            function getBoundingBoxPoints(path) {
                 var points = getPoints(path);
                 var x0, y0, x1, y1, point;
                 x0 = y0 = Infinity;
@@ -94,7 +89,16 @@
                         y1 = point.y;
                     }
                 }
-                return {x: x0 + x1 / 2, y: y0 + y1 / 2};
+                return [[x0, y0], [x1, y1]];
+
+            }
+
+            function getBoundingCenter(path) {
+                var bbox = getBoundingBoxPoints(path);
+                var out =  {x: (bbox[0][0] + bbox[1][0]) / 2, y: (bbox[0][1] + bbox[1][1]) / 2};
+                console.log(out);
+                console.log(bbox);
+                return out;
             }
 
             function choosePoints(shapeCentroid,
@@ -156,7 +160,28 @@
                 (queryPoint.x - connectorCentroid.x));
             }
 
-            return shapeConnector;
+            function boundingBox(path) {
+                var bbox = getBoundingBoxPoints(path);
+                var width = bbox[1][0] - bbox[0][0];
+                var height = bbox[1][1] - bbox[0][1];
+                var upperLeft = {x: bbox[0][0], y: bbox[0][1]};
+                var upperRight = {x: bbox[1][0], y: bbox[0][1]};
+                var lowerRight = {x: bbox[1][0], y: bbox[1][1]};
+                var lowerLeft = {x: bbox[0][0], y: bbox[1][1]};
+
+                return "M" + pathPoint(upperLeft) +
+                        "L" + pathPoint(upperRight) +
+                        "L" + pathPoint(lowerRight) +
+                        "L" + pathPoint(lowerLeft) +
+                        "L" + pathPoint(upperLeft) + "Z";
+            }
+
+            return {
+                shapeConnector: shapeConnector,
+                getBoundingBoxPoints: getBoundingBoxPoints,
+                getBoundingCenter: getBoundingCenter,
+                getBoundingBox: boundingBox
+            };
 
         }])
 }());
