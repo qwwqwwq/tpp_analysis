@@ -11,7 +11,7 @@ angular.module('d3Directives').directive(
 
                 var world;
                 var select1 = null, select2 = null;
-                var center = {x: 479, y: 310};
+                var center = {x: 520, y: 385};
 
                 function renderFromScope() {
                     d3.select("svg").remove();
@@ -110,6 +110,13 @@ angular.module('d3Directives').directive(
                             .attr("r", "5")
                             .attr("cx", center2.x)
                             .attr("cy", center2.y)
+                            .attr("class", "dot");
+
+                        d3.select("svg")
+                            .append("circle")
+                            .attr("r", "5")
+                            .attr("cx", center.x)
+                            .attr("cy", center.y)
                             .attr("class", "dot");
                     } else {
                         select1.classed('selected', false);

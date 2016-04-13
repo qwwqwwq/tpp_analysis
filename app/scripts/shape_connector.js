@@ -3,6 +3,24 @@
     angular.module('shapeConnector')
         .factory('shapeConnector', [function () {
 
+            function indexOfMin(arr) {
+                if (arr.length === 0) {
+                    return -1;
+                }
+
+                var min = arr[0];
+                var minIndex = 0;
+
+                for (var i = 1; i < arr.length; i++) {
+                    if (arr[i] < min) {
+                        minIndex = i;
+                        min = arr[i];
+                    }
+                }
+
+                return minIndex;
+            }
+
             function shapeConnector(connectorCentroid, pathA, pathB) {
                 var minorA, minorB, majorA, majorB, pointsA, pointsB;
 
@@ -16,19 +34,33 @@
                     getPoints(pathB),
                     connectorCentroid);
 
+                var distances = [
+                    dist(pointsA[0], pointsB[0]),
+                    dist(pointsA[0], pointsB[1]),
+                    dist(pointsA[1], pointsB[0]),
+                    dist(pointsA[1], pointsB[1])];
 
-                if (dist(pointsA[0], connectorCentroid) > dist(pointsA[1], connectorCentroid)) {
+                var idx = indexOfMin(distances);
+
+                if (idx == 0) {
                     minorA = pointsA[0];
-                    majorA = pointsA[1];
-                } else {
-                    minorA = pointsA[1];
-                    majorA = pointsA[0];
-                }
-                if (dist(pointsB[0], connectorCentroid) > dist(pointsB[1], connectorCentroid)) {
                     minorB = pointsB[0];
+                    majorA = pointsA[1];
                     majorB = pointsB[1];
-                } else {
+                } else if (idx == 1) {
+                    minorA = pointsA[0];
                     minorB = pointsB[1];
+                    majorA = pointsA[1];
+                    majorB = pointsB[0];
+                } else if (idx == 2) {
+                    minorA = pointsA[1];
+                    minorB = pointsB[0];
+                    majorA = pointsA[0];
+                    majorB = pointsB[1];
+                } else if (idx == 3) {
+                    minorA = pointsA[1];
+                    minorB = pointsB[1];
+                    majorA = pointsA[0];
                     majorB = pointsB[0];
                 }
 
@@ -95,10 +127,7 @@
 
             function getBoundingCenter(path) {
                 var bbox = getBoundingBoxPoints(path);
-                var out =  {x: (bbox[0][0] + bbox[1][0]) / 2, y: (bbox[0][1] + bbox[1][1]) / 2};
-                console.log(out);
-                console.log(bbox);
-                return out;
+                return {x: (bbox[0][0] + bbox[1][0]) / 2, y: (bbox[0][1] + bbox[1][1]) / 2};
             }
 
             function choosePoints(shapeCentroid,
@@ -123,12 +152,17 @@
                     }
                 }
 
+                console.log(closestLeftScore);
+                console.log(closestRightScore);
+
                 //TODO: last ditch guess
                 if (closestLeftIdx === -1) {
+                    console.log("last ditch");
                     closestLeftIdx = 0;
                 }
 
                 if (closestRightIdx == -1) {
+                    console.log("last ditch");
                     closestRightIdx = shapePoints.length / 2;
                 }
 
@@ -155,7 +189,8 @@
             }
 
             function determinant(connectorCentroid, shapeCentroid, queryPoint) {
-                return ((shapeCentroid.x - queryPoint.x) *
+                //(Bx - Ax) * (Y - Ay) - (By - Ay) * (X - Ax)
+                return ((shapeCentroid.x - connectorCentroid.x) *
                 ((queryPoint.y - connectorCentroid.y) - (shapeCentroid.y - connectorCentroid.y)) *
                 (queryPoint.x - connectorCentroid.x));
             }
