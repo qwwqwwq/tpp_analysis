@@ -134,15 +134,6 @@ angular.module('d3Directives').directive(
                             .attr("cx", center.x)
                             .attr("cy", center.y)
                             .attr("class", "dot");
-
-                        d3.selectAll("path").sort(function(a, b) {
-                           if (a.classed("connector")) {
-                               return -1;
-                           } else {
-                               return 1;
-                           }
-                        });
-
                     } else {
                         select1.classed('selected', false);
                         select2.classed('selected', false);
