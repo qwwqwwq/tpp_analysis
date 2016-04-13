@@ -59,6 +59,21 @@ angular.module('d3Directives').directive(
                         .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
                         .attr("class", "boundary")
                         .attr("d", path);
+
+                    var radialGradient = svg.append("defs")
+                        .append("radialGradient")
+                        .attr("id", "radial-gradient")
+                        .attr("cx", center.x)
+                        .attr("cy", center.y)
+                        .attr("r", "1000px");
+
+                    radialGradient.append("stop")
+                        .attr("offset", "0%")
+                        .attr("stop-color", "#0033cc");
+
+                    radialGradient.append("stop")
+                        .attr("offset", "100%")
+                        .attr("stop-color", "#ffffff");
                 }
 
                 function toggleSelected(element) {
@@ -83,7 +98,8 @@ angular.module('d3Directives').directive(
                         d3.select("svg")
                             .append("path")
                             .attr("d", shapeConnector.shapeConnector(center, select1[0][0], select2[0][0]))
-                            .attr("class", "connector");
+                            .attr("class", "connector")
+                            .style("fill", "url(#radial-gradient)");
 
                         d3.select("svg")
                             .append("path")
@@ -118,6 +134,15 @@ angular.module('d3Directives').directive(
                             .attr("cx", center.x)
                             .attr("cy", center.y)
                             .attr("class", "dot");
+
+                        d3.selectAll("path").sort(function(a, b) {
+                           if (a.classed("connector")) {
+                               return -1;
+                           } else {
+                               return 1;
+                           }
+                        });
+
                     } else {
                         select1.classed('selected', false);
                         select2.classed('selected', false);
