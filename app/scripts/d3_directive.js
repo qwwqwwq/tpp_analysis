@@ -51,7 +51,7 @@ angular.module('d3Directives').directive(
                              return d.properties.name.replace(/\s/g, '');
                              })*/
                             .on("click", function (d, i) {
-                                markSelected(d3.select(this));
+                                renderSelected(d3.select(this));
                             })
                             .attr("d", path);
 
@@ -69,12 +69,16 @@ angular.module('d3Directives').directive(
                                 .attr("cy", "50%")
                                 .attr("fx", "50%")
                                 .attr("fy", "50%")
-                                .attr("r", "50%")
+                                .attr("r", "70%")
                             ;
 
                         radialGradient.append("stop")
                             .attr("offset", "0%")
-                            .attr("stop-color", "#99ccff");
+                            .attr("stop-color", "#0077e6");
+
+                        radialGradient.append("stop")
+                            .attr("offset", "60%")
+                            .attr("stop-color", "#cce6ff");
 
                         radialGradient.append("stop")
                             .attr("offset", "100%")
@@ -94,7 +98,7 @@ angular.module('d3Directives').directive(
                         return {x: bounds[0][0] + bounds[1][0] / 2, y: bounds[0][1] + bounds[1][1] / 2};
                     }
 
-                    function markSelected(element) {
+                    function renderSelected(element) {
                         //var element = d3.select('#' + countryName.replace(/\s/g, ''));
                         if (select1 === null) {
                             select1 = element;
@@ -124,6 +128,12 @@ angular.module('d3Directives').directive(
                                 .attr("cx", center1.x)
                                 .attr("cy", center1.y)
                                 .attr("class", "dot");
+
+                            d3.select("svg")
+                                .append("text")
+                                .attr("cx", center1.x)
+                                .attr("cy", center1.y)
+                                .text(scope.$parent.data['Base Rate']);
 
                             var center2 = shapeConnector.getBoundingCenter(select2[0][0]);
                             d3.select("svg")
@@ -157,7 +167,7 @@ angular.module('d3Directives').directive(
                     });
 
                     queue()
-                        .defer(d3.json, "static/test.json")
+                        .defer(d3.json, "static/tpp-50m.json")
                         .awaitAll(ready);
 
                     function ready(error, data) {
