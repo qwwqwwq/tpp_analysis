@@ -2,14 +2,15 @@
 
     <label for="htsCodeInput">HTS 8 (2010)</label>
 
-    <form id="htsCodeInput">
+    <form>
         <md-autocomplete
                 md-selected-item="htsCode"
                 md-search-text="searchText"
                 md-items="item in getMatches(searchText)"
-                md-item-text="item[1]">
+                md-item-text="item[1]"
+                md-input-id="htsCodeInput">
             <md-item-template>
-                <span md-highlight-text="searchText">{{item[1]}}</span>
+                <span md-highlight-text="searchText" md-highlight-flags="i">{{item[1]}}</span>
             </md-item-template>
             <md-not-found>
                 No matches found.

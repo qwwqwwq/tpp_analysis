@@ -8,7 +8,7 @@ angular.module('data', ['d3', 'queue']);
 angular.module('tppProjection', ['d3']);
 angular.module('d3Directives', ['d3', 'queue', 'topojson', 'ui.bootstrap', 'data', 'tppProjection', 'shapeConnector']);
 
-var App = angular.module('App', ['d3Directives', 'ngRoute', 'ui.bootstrap', 'firebase'])
+var App = angular.module('App', ['d3Directives', 'ngRoute', 'ui.bootstrap', 'firebase', 'ngMaterial'])
     .config(['$routeProvider', function ($routeProvider) {
         $routeProvider
             .otherwise({
@@ -32,7 +32,7 @@ App.controller('MapController', ['$scope', '$timeout', 'd3', '$routeParams', '$l
                 console.error(cancel);
             });
         }
-
+/*
         ref.authAnonymously(function(error, authData) {
             if (error) {
                 console.log("Authentication Failed!", error);
@@ -41,7 +41,7 @@ App.controller('MapController', ['$scope', '$timeout', 'd3', '$routeParams', '$l
                 authenticated = true;
                 queryAndRenderForHts("1011000");
             }
-        });
+        });*/
 
         $scope.submitOnEnter = function(keyEvent) {
             console.log(keyEvent);
@@ -59,14 +59,18 @@ App.controller('MapController', ['$scope', '$timeout', 'd3', '$routeParams', '$l
         });
 
         $scope.getMatches = function(text) {
-            return (text ? hts_codes.filter(createFilterFor(text)) : hts_codes).slice(0, 5);
+            var options = (text ? hts_codes.filter(createFilterFor(text)) : hts_codes);
+            return options.slice(0,5);
         };
+
+
 
         function createFilterFor(query) {
             var lowercaseQuery = angular.lowercase(query);
+            console.log(lowercaseQuery);
 
             return function filterFn(item) {
-                return (item[1].indexOf(lowercaseQuery) === 0);
+                return (angular.lowercase(item[1]).indexOf(lowercaseQuery) !== -1);
             };
         }
     }
