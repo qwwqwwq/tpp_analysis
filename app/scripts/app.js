@@ -21,6 +21,7 @@ App.controller('MapController', ['$scope', '$timeout', 'd3', '$routeParams', '$l
     function ($scope, $timeout, d3, $routeParams, $location, $route, $firebaseObject) {
         var ref = new Firebase('https://incandescent-fire-3940.firebaseio.com/');
         var authenticated = false;
+        $scope.htsCode = "1011000";
 
         function queryAndRenderForHts(htsCode) {
             ref.orderByChild("HTS 8 (2010)").equalTo(htsCode).on("child_added", function(snapshot) {
@@ -41,6 +42,33 @@ App.controller('MapController', ['$scope', '$timeout', 'd3', '$routeParams', '$l
                 queryAndRenderForHts("1011000");
             }
         });
+
+        $scope.submitOnEnter = function(keyEvent) {
+            console.log(keyEvent);
+            if (keyEvent.which === 13) {
+                console.log($scope.htsCode);
+                queryAndRenderForHts($scope.htsCode);
+            }
+        };
+
+        var hts_codes;
+
+        d3.json("static/HTS_codes.json", function(data) {
+            hts_codes = data;
+            console.log("got codes");
+        });
+
+        $scope.getMatches = function(text) {
+            return (text ? hts_codes.filter(createFilterFor(text)) : hts_codes).slice(0, 5);
+        };
+
+        function createFilterFor(query) {
+            var lowercaseQuery = angular.lowercase(query);
+
+            return function filterFn(item) {
+                return (item[1].indexOf(lowercaseQuery) === 0);
+            };
+        }
     }
 ]);
 

@@ -1,4 +1,23 @@
 <div ng-controller="MapController">
+
+    <label for="htsCodeInput">HTS 8 (2010)</label>
+
+    <form id="htsCodeInput">
+        <md-autocomplete
+                md-selected-item="htsCode"
+                md-search-text="searchText"
+                md-items="item in getMatches(searchText)"
+                md-item-text="item[1]">
+            <md-item-template>
+                <span md-highlight-text="searchText">{{item[1]}}</span>
+            </md-item-template>
+            <md-not-found>
+                No matches found.
+            </md-not-found>
+        </md-autocomplete>
+    </form>
+
     <div id="map" d3_map>
     </div>
+
 </div>

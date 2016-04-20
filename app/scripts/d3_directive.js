@@ -16,11 +16,11 @@ angular.module('d3Directives').directive(
                     function renderFromScope() {
                         d3.select("svg").remove();
 
-                        var width = 1450,
-                            height = 750;
+                        var width = 800,
+                            height = 500;
 
                         var projection = tppProjection
-                            .scale(1070)
+                            .scale(600)
                             .translate([width / 2, height / 2]);
 
                         //center = {x: width / 2, y: height / 2};
@@ -131,9 +131,10 @@ angular.module('d3Directives').directive(
 
                             d3.select("svg")
                                 .append("text")
-                                .attr("cx", center1.x)
-                                .attr("cy", center1.y)
-                                .text(scope.$parent.data['Base Rate']);
+                                .attr("x", center1.x)
+                                .attr("y", center1.y)
+                                .text(scope.$parent.data['Base Rate'])
+                                .attr("class", "info");
 
                             var center2 = shapeConnector.getBoundingCenter(select2[0][0]);
                             d3.select("svg")
@@ -155,6 +156,7 @@ angular.module('d3Directives').directive(
                             d3.selectAll(".connector").remove();
                             d3.selectAll(".bbox").remove();
                             d3.selectAll(".dot").remove();
+                            d3.selectAll(".info").remove();
                             select2 = null;
                             select1 = element;
                         }
