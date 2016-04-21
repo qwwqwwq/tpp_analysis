@@ -106,7 +106,12 @@ angular.module('d3Directives').directive(
                             select2 = element;
                             d3.select("#mapSvg")
                                 .insert("path", ":first-child")
-                                .attr("d", shapeConnector.shapeConnector(center, select1[0][0], select2[0][0]))
+                                .attr("d", function() {
+
+                                    var d = shapeConnector.shapeConnector(center, select1[0][0], select2[0][0]);
+                                    console.log(d);
+                                    return d;
+                                })
                                 .attr("class", "connector")
                                 .style("fill", "url(#radial-gradient)");
 

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="node_modules/bezier-js/bezier.js"></script>
+<script>
+    var width = 960,
+            height = 500;
+    var color = d3.interpolateLab("#008000", "#c83a22");
+    var svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+    var b1 = new Bezier({x: 154.24, y: 409.17}, {x: 217.12, y: 329.58}, {x: 318.51, y: 270.62}, {x: 357.02, y: 291.24});
+    var b2 = new Bezier({x: 93.45, y: 334.76}, {x: 280, y: 250}, {x: 280, y: 250}, {x: 364.84, y: 266.88});
+
+    drawGradientPath(b1, b2, 50, svg);
+
+    function drawGradientPath(bezier1, bezier2, steps, svg) {
+        var lutMajor = bezier2.getLUT(steps);
+        var lutMinor = bezier1.getLUT(steps);
+        for (var i = 0; i < steps - 1; i++) {
+            var pts = [
+                lutMinor[i], lutMajor[i],
+                lutMajor[i + 1], lutMinor[i + 1],
+                lutMinor[i]
+            ];
+
+            var minorSection = bezier1.split(i / steps, ((i + 1) / steps));
+            var majorSection = bezier2.split(i / steps, ((i + 1) / steps));
+
+            var sectionD = ("M" + pathPoint(lutMinor[i]) + "L" + pathPoint(lutMajor[i]) +
+            stripMove(majorSection.toSVG()) + "L" + pathPoint(lutMinor[i + 1]) +
+            stripMove(minorSection.toSVG()) + "Z");
+
+            svg
+                    .append("path")
+                    .style("stroke", color(i / steps))
+                    .style("fill", color(i / steps))
+                    .attr("d", sectionD + "");
+        }
+    }
+
+    /**
+     * Format a point so it can be safely concatenated with a path string.
+     */
+    function pathPoint(p) {
+        return p.x + " " + p.y + " ";
+    }
+
+    /**
+     * Strip the first SVG path "move" command from a path string.
+     */
+    function stripMove(d) {
+        var s = d + "";
+        return s.substring(s.indexOf("C"));
+    }
+
+</script>
+
+</body>
+</html>
