@@ -11,17 +11,18 @@ angular.module('d3Directives').directive(
 
                     var world;
                     var select1 = null, select2 = null;
-                    var center = {x: 520, y: 385};
+                    var width = 560,
+                        height = 500;
+                    var center = {x: width/2, y: height/2};
 
                     function renderFromScope() {
                         d3.select("#mapSvg").remove();
 
-                        var width = 560,
-                            height = 500;
+
 
                         var projection = tppProjection
                             .scale(600)
-                            .translate([width / 1.6, height / 2]);
+                            .translate([width / 1.5, height / 2]);
 
                         var path = d3.geo.path()
                             .projection(projection);

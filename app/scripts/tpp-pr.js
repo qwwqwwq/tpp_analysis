@@ -27,6 +27,10 @@
                     australia: d3.geo.conicEqualArea()
                         .rotate([-45, -45, 0])
                         .center([132, -27])
+                        .parallels([-18, -36]),
+                    new_zealand: d3.geo.conicEqualArea()
+                        .rotate([-45, -45, 0])
+                        .center([132, -27])
                         .parallels([-18, -36])
                 };
 
@@ -79,6 +83,15 @@
                         clipXMin: -1,
                         clipXMax: -0.35,
                         scale: 0.3
+                    },
+                    new_zealand: {
+                        clipXCenter: -0.5,
+                        clipYCenter: 0.4,
+                        clipYMin: 0.3,
+                        clipYMax: 0.5,
+                        clipXMin: -0.4,
+                        clipXMax: -0.15,
+                        scale: 0.5
                     }
                 };
 

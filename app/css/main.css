@@ -5,14 +5,14 @@ rect {
 
 .sphere {
     fill: none;
-    stroke: #ccc;
-    shape-rendering: crispEdges;
+/*    stroke: #ccc;
+    shape-rendering: crispEdges;*/
 }
 
 .graticule {
     fill: none;
-    stroke: #777;
-    stroke-opacity: .2;
+/*    stroke: #777;
+    stroke-opacity: .2;*/
 }
 
 .mesh {

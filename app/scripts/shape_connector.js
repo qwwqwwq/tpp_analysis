@@ -1,7 +1,7 @@
 (function () {
     'use strict';
     angular.module('shapeConnector')
-        .factory('shapeConnector', [function () {
+        .factory('shapeConnector', ['Bezier', function (Bezier) {
 
             function indexOfMin(arr) {
                 if (arr.length === 0) {
@@ -42,22 +42,34 @@
 
                 var idx = indexOfMin(distances);
 
-                if (idx == 0) {
+                function intersects(minorA, minorB, majorA, majorB) {
+                    var intersections = new Bezier(minorA,
+                        halfwayPoint(minorA, connectorCentroid),
+                        halfwayPoint(minorB, connectorCentroid),
+                        minorB).intersects(
+                        new Bezier(
+                            majorA, connectorCentroid, majorB
+                        )
+                    );
+                    return !!intersections.length;
+                }
+
+                if (idx == 0 && !intersects(pointsA[0], pointsB[0], pointsA[1], pointsB[1])) {
                     minorA = pointsA[0];
                     minorB = pointsB[0];
                     majorA = pointsA[1];
                     majorB = pointsB[1];
-                } else if (idx == 1) {
+                } else if (idx == 1 && !intersects(pointsA[0], pointsB[1], pointsA[1], pointsB[0])) {
                     minorA = pointsA[0];
                     minorB = pointsB[1];
                     majorA = pointsA[1];
                     majorB = pointsB[0];
-                } else if (idx == 2) {
+                } else if (idx == 2 && !intersects(pointsA[1], pointsB[0], pointsA[0], pointsB[1])) {
                     minorA = pointsA[1];
                     minorB = pointsB[0];
                     majorA = pointsA[0];
                     majorB = pointsB[1];
-                } else if (idx == 3) {
+                } else {//if (idx == 3 && !intersects(pointsA[1], pointsB[1], pointsA[0], pointsB[0])) {
                     minorA = pointsA[1];
                     minorB = pointsB[1];
                     majorA = pointsA[0];

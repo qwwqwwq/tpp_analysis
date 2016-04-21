@@ -3,7 +3,8 @@
 angular.module('d3', []);
 angular.module('topojson', []);
 angular.module('queue', []);
-angular.module('shapeConnector', []);
+angular.module('bezier', []);
+angular.module('shapeConnector', ['bezier']);
 angular.module('data', ['d3', 'queue']);
 angular.module('tppProjection', ['d3']);
 angular.module('d3Directives', ['d3', 'queue', 'topojson', 'ui.bootstrap', 'data', 'tppProjection', 'shapeConnector']);
