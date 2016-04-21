@@ -69,7 +69,7 @@
                     minorB = pointsB[0];
                     majorA = pointsA[0];
                     majorB = pointsB[1];
-                } else {//if (idx == 3 && !intersects(pointsA[1], pointsB[1], pointsA[0], pointsB[0])) {
+                } else { //if (idx == 3 && !intersects(pointsA[1], pointsB[1], pointsA[0], pointsB[0])) {
                     minorA = pointsA[1];
                     minorB = pointsB[1];
                     majorA = pointsA[0];
