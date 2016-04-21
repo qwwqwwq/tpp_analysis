@@ -14,21 +14,20 @@ angular.module('d3Directives').directive(
                     var center = {x: 520, y: 385};
 
                     function renderFromScope() {
-                        d3.select("svg").remove();
+                        d3.select("#mapSvg").remove();
 
-                        var width = 800,
+                        var width = 560,
                             height = 500;
 
                         var projection = tppProjection
                             .scale(600)
-                            .translate([width / 2, height / 2]);
-
-                        //center = {x: width / 2, y: height / 2};
+                            .translate([width / 1.6, height / 2]);
 
                         var path = d3.geo.path()
                             .projection(projection);
 
                         var svg = d3.select("#map").append("svg")
+                            .attr("id", "mapSvg")
                             .attr("width", width)
                             .attr("height", height);
 
@@ -104,32 +103,32 @@ angular.module('d3Directives').directive(
                             select1 = element;
                         } else if (select2 === null) {
                             select2 = element;
-                            d3.select("svg")
+                            d3.select("#mapSvg")
                                 .insert("path", ":first-child")
                                 .attr("d", shapeConnector.shapeConnector(center, select1[0][0], select2[0][0]))
                                 .attr("class", "connector")
                                 .style("fill", "url(#radial-gradient)");
 
-                            d3.select("svg")
+                            d3.select("#mapSvg")
                                 .append("path")
                                 .attr("d", shapeConnector.getBoundingBox(select1[0][0]))
                                 .attr("class", "bbox");
 
-                            d3.select("svg")
+                            d3.select("#mapSvg")
                                 .append("path")
                                 .attr("d", shapeConnector.getBoundingBox(select2[0][0]))
                                 .attr("class", "bbox");
 
 
                             var center1 = shapeConnector.getBoundingCenter(select1[0][0]);
-                            d3.select("svg")
+                            d3.select("#mapSvg")
                                 .append("circle")
                                 .attr("r", "5")
                                 .attr("cx", center1.x)
                                 .attr("cy", center1.y)
                                 .attr("class", "dot");
 
-                            d3.select("svg")
+                            d3.select("#mapSvg")
                                 .append("text")
                                 .attr("x", center1.x)
                                 .attr("y", center1.y)
@@ -137,19 +136,21 @@ angular.module('d3Directives').directive(
                                 .attr("class", "info");
 
                             var center2 = shapeConnector.getBoundingCenter(select2[0][0]);
-                            d3.select("svg")
+                            d3.select("#mapSvg")
                                 .append("circle")
                                 .attr("r", "5")
                                 .attr("cx", center2.x)
                                 .attr("cy", center2.y)
                                 .attr("class", "dot");
 
-                            d3.select("svg")
+                            d3.select("#mapSvg")
                                 .append("circle")
                                 .attr("r", "5")
                                 .attr("cx", center.x)
                                 .attr("cy", center.y)
                                 .attr("class", "dot");
+
+                           console.log( d3.selectAll(".connector"));
                         } else {
                             select1.classed('selected', false);
                             select2.classed('selected', false);

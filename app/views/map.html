@@ -1,22 +1,30 @@
 <div ng-controller="MapController">
 
-    <label for="htsCodeInput">HTS 8 (2010)</label>
 
-    <form>
-        <md-autocomplete
-                md-selected-item="htsCode"
-                md-search-text="searchText"
-                md-items="item in getMatches(searchText)"
-                md-item-text="item[1]"
-                md-input-id="htsCodeInput">
-            <md-item-template>
-                <span md-highlight-text="searchText" md-highlight-flags="i">{{item[1]}}</span>
-            </md-item-template>
-            <md-not-found>
-                No matches found.
-            </md-not-found>
-        </md-autocomplete>
-    </form>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <form ng-submit="">
+                    <label for="htsCodeInput">HTS 8 (2010)</label>
+                    <md-autocomplete
+                            md-selected-item="htsCode"
+                            md-search-text="searchText"
+                            md-items="item in getMatches(searchText)"
+                            md-item-text="item[1]"
+                            placeholder=""
+                            md-input-id="htsCodeInput">
+                        <md-item-template>
+                            <span md-highlight-text="searchText" md-highlight-flags="i">{{item[1]}}</span>
+                        </md-item-template>
+                        <md-not-found>
+                            No matches found.
+                        </md-not-found>
+                    </md-autocomplete>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <div id="map" d3_map>
     </div>

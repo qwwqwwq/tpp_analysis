@@ -152,9 +152,6 @@
                     }
                 }
 
-                console.log(closestLeftScore);
-                console.log(closestRightScore);
-
                 //TODO: last ditch guess
                 if (closestLeftIdx === -1) {
                     console.log("last ditch");

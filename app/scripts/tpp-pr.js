@@ -75,9 +75,9 @@
                         clipXCenter: -0.5,
                         clipYCenter: 0.4,
                         clipYMin: 0.1,
-                        clipYMax: 0.5,
+                        clipYMax: 0.38,
                         clipXMin: -1,
-                        clipXMax: -0.25,
+                        clipXMax: -0.35,
                         scale: 0.3
                     }
                 };
