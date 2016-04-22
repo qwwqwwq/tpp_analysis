@@ -18,12 +18,27 @@
     var b1 = new Bezier({x: 154.24, y: 409.17}, {x: 217.12, y: 329.58}, {x: 318.51, y: 270.62}, {x: 357.02, y: 291.24});
     var b2 = new Bezier({x: 93.45, y: 334.76}, {x: 280, y: 250}, {x: 280, y: 250}, {x: 364.84, y: 266.88});
 
-    drawGradientPath(b1, b2, 50, svg);
+
+
+    drawGradientPath(b1, b2, 100, svg);
+
+    svg
+            .append("path")
+            .style("stroke", "#000000")
+            .style("fill", "none")
+            .attr("d", b1.toSVG());
+
+    svg
+            .append("path")
+            .style("stroke", "#000000")
+            .style("fill", "none")
+            .attr("d", b2.toSVG());
+
 
     function drawGradientPath(bezier1, bezier2, steps, svg) {
         var lutMajor = bezier2.getLUT(steps);
         var lutMinor = bezier1.getLUT(steps);
-        for (var i = 0; i < steps - 1; i++) {
+        for (var i = 0; i < steps; i++) {
             var pts = [
                 lutMinor[i], lutMajor[i],
                 lutMajor[i + 1], lutMinor[i + 1],
@@ -35,7 +50,9 @@
 
             var sectionD = ("M" + pathPoint(lutMinor[i]) + "L" + pathPoint(lutMajor[i]) +
             stripMove(majorSection.toSVG()) + "L" + pathPoint(lutMinor[i + 1]) +
-            stripMove(minorSection.toSVG()) + "Z");
+            stripMove(reverseBezier(minorSection).toSVG()) + "Z");
+
+            console.log(sectionD);
 
             svg
                     .append("path")
@@ -43,6 +60,12 @@
                     .style("fill", color(i / steps))
                     .attr("d", sectionD + "");
         }
+    }
+
+    function reverseBezier(bezier) {
+        var reversed = Object.create(Bezier.prototype);
+        Bezier.apply(reversed, bezier.points.reverse());
+        return reversed;
     }
 
     /**
