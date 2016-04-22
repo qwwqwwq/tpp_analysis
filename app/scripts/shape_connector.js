@@ -21,6 +21,63 @@
                 return minIndex;
             }
 
+            /**
+             * Return an array of path attributes representing "slices" of a bridge
+             * between the two shapes.
+             *
+             * @param connectorCentroid
+             * @param pathA
+             * @param pathB
+             * @param nSections
+             * @returns Array{string}
+             */
+            function sectionedConnector(connectorCentroid, pathA, pathB, nSections) {
+                var output = [];
+
+                var beziers = shapeConnector(connectorCentroid, pathA, pathB);
+
+                var lutMinor = beziers[0].getLUT(nSections);
+                var lutMajor = beziers[1].getLUT(nSections);
+                for (var i = 0; i < nSections; i++) {
+                    var minorSection = beziers[0].split(i / nSections, (i + 1) / nSections);
+                    var majorSection = beziers[1].split(i / nSections, (i + 1) / nSections);
+
+                    output.push(("M" + pathPoint(lutMinor[i]) + "L" + pathPoint(lutMajor[i]) +
+                    stripMove(majorSection.toSVG()) + "L" + pathPoint(lutMinor[i + 1]) +
+                    stripMove(reverseBezier(minorSection).toSVG()) + "Z"));
+                }
+
+                return output;
+            }
+
+            /**
+             * Toggle bezier between clockwise / counterclockwise
+             * @param bezier {Bezier}
+             * @returns {Bezier}
+             */
+            function reverseBezier(bezier) {
+                var reversed = Object.create(Bezier.prototype);
+                Bezier.apply(reversed, bezier.points.reverse());
+                return reversed;
+            }
+
+            /**
+             * Strip the first SVG path "move" command from a path string.
+             */
+            function stripMove(d) {
+                var s = d + "";
+                return s.substring(s.indexOf("C"));
+            }
+
+            /**
+             * Return two Bezier curves forming a bridge between the
+             * two shapes.
+             *
+             * @param connectorCentroid stroke will "bend" toward this point
+             * @param pathA Path outline of shape A
+             * @param pathB Path outline of shape B
+             * @returns Array [{Bezier}, {Bezier}] minor and major bezier curves
+             */
             function shapeConnector(connectorCentroid, pathA, pathB) {
                 var minorA, minorB, majorA, majorB, pointsA, pointsB;
 
@@ -76,14 +133,14 @@
                     majorB = pointsB[0];
                 }
 
-                return "M" + pathPoint(minorA) +
-                    "C" + pathPoint(halfwayPoint(minorA, connectorCentroid))
-                    + pathPoint(halfwayPoint(minorB, connectorCentroid))
-                    + pathPoint(minorB) +
-                    "L" + pathPoint(majorB) +
-                    "C" + pathPoint(connectorCentroid)
-                    + pathPoint(connectorCentroid)
-                    + pathPoint(majorA) + "Z";
+                return [new Bezier(minorA,
+                    halfwayPoint(minorA, connectorCentroid),
+                    halfwayPoint(minorB, connectorCentroid),
+                    minorB),
+                    new Bezier(majorA,
+                        connectorCentroid,
+                        connectorCentroid,
+                        majorB)];
             }
 
             function pathPoint(p) {
@@ -214,17 +271,18 @@
                 var lowerLeft = {x: bbox[0][0], y: bbox[1][1]};
 
                 return "M" + pathPoint(upperLeft) +
-                        "L" + pathPoint(upperRight) +
-                        "L" + pathPoint(lowerRight) +
-                        "L" + pathPoint(lowerLeft) +
-                        "L" + pathPoint(upperLeft) + "Z";
+                    "L" + pathPoint(upperRight) +
+                    "L" + pathPoint(lowerRight) +
+                    "L" + pathPoint(lowerLeft) +
+                    "L" + pathPoint(upperLeft) + "Z";
             }
 
             return {
                 shapeConnector: shapeConnector,
                 getBoundingBoxPoints: getBoundingBoxPoints,
                 getBoundingCenter: getBoundingCenter,
-                getBoundingBox: boundingBox
+                getBoundingBox: boundingBox,
+                sectionedConnector: sectionedConnector
             };
 
         }])

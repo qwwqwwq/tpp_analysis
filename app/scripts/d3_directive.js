@@ -14,6 +14,7 @@ angular.module('d3Directives').directive(
                     var width = 560,
                         height = 500;
                     var center = {x: width/2, y: height/2};
+                    var sections = 50;
 
                     function renderFromScope() {
                         d3.select("#mapSvg").remove();
@@ -104,16 +105,30 @@ angular.module('d3Directives').directive(
                             select1 = element;
                         } else if (select2 === null) {
                             select2 = element;
-                            d3.select("#mapSvg")
-                                .insert("path", ":first-child")
-                                .attr("d", function() {
 
-                                    var d = shapeConnector.shapeConnector(center, select1[0][0], select2[0][0]);
-                                    console.log(d);
+                            var color = d3.interpolateLab("#008000", "#c83a22");
+                            var ds = shapeConnector.sectionedConnector(center, select1[0][0], select2[0][0], sections);
+
+                            console.log(ds);
+
+                            d3.select("#mapSvg")
+                                .insert("g", ":first-child")
+                                .attr("class", "connector")
+                                .selectAll("path")
+                                .data(ds)
+                                .enter()
+                                .append("path")
+                                .style("stroke", function(d,i) {
+                                    console.log(i);
+                                    return color(i / sections);
+                                })
+                                .style("fill", function(d,i) {
+                                    return color(i / sections);
+                                })
+                                .attr("d", function(d) {
                                     return d;
                                 })
-                                .attr("class", "connector")
-                                .style("fill", "url(#radial-gradient)");
+                                .attr("class", "connector");
 
                             d3.select("#mapSvg")
                                 .append("path")

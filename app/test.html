@@ -18,8 +18,6 @@
     var b1 = new Bezier({x: 154.24, y: 409.17}, {x: 217.12, y: 329.58}, {x: 318.51, y: 270.62}, {x: 357.02, y: 291.24});
     var b2 = new Bezier({x: 93.45, y: 334.76}, {x: 280, y: 250}, {x: 280, y: 250}, {x: 364.84, y: 266.88});
 
-
-
     drawGradientPath(b1, b2, 100, svg);
 
     svg
@@ -53,6 +51,8 @@
             stripMove(reverseBezier(minorSection).toSVG()) + "Z");
 
             console.log(sectionD);
+            console.log(minorSection.clockwise);
+            console.log(majorSection.clockwise);
 
             svg
                     .append("path")
