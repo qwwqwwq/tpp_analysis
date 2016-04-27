@@ -64,7 +64,7 @@ App.controller('MapController', ['$scope', '$timeout', 'd3', '$routeParams', '$l
 
         $scope.getMatches = function (text) {
             var options = (text ? hts_codes.filter(createFilterFor(text)) : hts_codes);
-            return options.slice(0, 5);
+            return options.slice(0, 3);
         };
 
 
