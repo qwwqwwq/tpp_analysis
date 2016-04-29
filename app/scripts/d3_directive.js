@@ -11,18 +11,16 @@ angular.module('d3Directives').directive(
 
                     var world;
                     var select1 = null, select2 = null;
-                    var width = 560,
-                        height = 500;
+                    var width = 840,
+                        height = 750;
                     var center = {x: width/2, y: height/2};
                     var sections = 50;
 
                     function renderFromScope() {
                         d3.select("#mapSvg").remove();
 
-
-
                         var projection = tppProjection
-                            .scale(600)
+                            .scale(1000)
                             .translate([width / 1.5, height / 2]);
 
                         var path = d3.geo.path()
@@ -99,6 +97,26 @@ angular.module('d3Directives').directive(
                         return {x: bounds[0][0] + bounds[1][0] / 2, y: bounds[0][1] + bounds[1][1] / 2};
                     }
 
+                    /**
+                     * Return path element representing sparkline for data.
+                     */
+                    function getSparkline(data, width, height) {
+                        var domain = d3.extent(data);
+                        var x = d3.scale.linear().domain(domain).range([0, width]);
+                        var y = d3.scale.linear().domain(domain).range([0, height]);
+
+                        var line = d3.svg.line()
+                            .interpolate("basis")
+                            .x(function(d) {
+                                return x(d);
+                            })
+                            .y(function(d) {
+                                return y(d);
+                            });
+
+                        return line(data);
+                    }
+
                     function renderSelected(element) {
                         //var element = d3.select('#' + countryName.replace(/\s/g, ''));
                         if (select1 === null) {
@@ -149,12 +167,7 @@ angular.module('d3Directives').directive(
                                 .attr("cy", center1.y)
                                 .attr("class", "dot");
 
-                            d3.select("#mapSvg")
-                                .append("text")
-                                .attr("x", center1.x)
-                                .attr("y", center1.y)
-                                .text(scope.$parent.data['Base Rate'])
-                                .attr("class", "info");
+
 
                             var center2 = shapeConnector.getBoundingCenter(select2[0][0]);
                             d3.select("#mapSvg")
@@ -170,6 +183,40 @@ angular.module('d3Directives').directive(
                                 .attr("cx", center.x)
                                 .attr("cy", center.y)
                                 .attr("class", "dot");
+
+                            d3.select("#mapSvg")
+                                .append("rect")
+                                .attr("x", center1.x)
+                                .attr("y", center1.y)
+                                .attr("rx", 20)
+                                .attr("ry", 20)
+                                .attr("width", 100)
+                                .attr("height", 100)
+                                .attr("class", "svg-tooltip");
+
+                            d3.select("#mapSvg")
+                                .append("rect")
+                                .attr("x", center2.x)
+                                .attr("rx", 20)
+                                .attr("ry", 20)
+                                .attr("y", center2.y)
+                                .attr("width", 100)
+                                .attr("height", 100)
+                                .attr("class", "svg-tooltip");
+
+                            d3.select("#mapSvg")
+                                .append("text")
+                                .attr("x", center1.x + 50)
+                                .attr("y", center1.y + 40)
+                                .text(scope.$parent.data['Base Rate'])
+                                .attr("class", "info");
+
+                            d3.select("#mapSvg")
+                                .append("path")
+                                .attr("d", getSparkline([1,2,3,4,3,2,1], 80, 30))
+                                .attr("class", "sparkline")
+                                .attr("transform",
+                                      "translate(" + (center1.x + 10) + "," + (center1.y + 60) + ")");
 
                            console.log( d3.selectAll(".connector"));
                         } else {

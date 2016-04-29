@@ -36,6 +36,7 @@ rect {
 .info {
     font-size: 16px;
     text-anchor: middle;
+    fill: #ffffff;
 }
 
 .selected {
@@ -72,6 +73,16 @@ rect {
     color: #31b0d5 !important;
 }
 
-.autocomplete-custom-template ul {
+.autocomplete-custom-template div {
     height: 500px;
+}
+
+.svg-tooltip {
+    fill: #000000;
+}
+
+.sparkline {
+    stroke-width: 1px;
+    stroke: #ffffff;
+    fill: none;
 }
