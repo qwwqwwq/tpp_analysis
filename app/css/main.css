@@ -86,3 +86,7 @@ rect {
     stroke: #ffffff;
     fill: none;
 }
+
+.sparkline-point {
+    fill: red;
+}

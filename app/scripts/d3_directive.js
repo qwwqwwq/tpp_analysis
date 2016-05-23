@@ -100,21 +100,35 @@ angular.module('d3Directives').directive(
                     /**
                      * Return path element representing sparkline for data.
                      */
-                    function getSparkline(data, width, height) {
+                    function getSparkline(data, width, height, year, center) {
                         var domain = d3.extent(data);
-                        var x = d3.scale.linear().domain(domain).range([0, width]);
-                        var y = d3.scale.linear().domain(domain).range([0, height]);
+                        console.log(domain);
+                        var x = d3.scale.linear().domain([0, data.length]).range([0, width]);
+                        var y = d3.scale.linear().domain(domain).range([height, 0]);
 
                         var line = d3.svg.line()
-                            .interpolate("basis")
-                            .x(function(d) {
-                                return x(d);
+                            .x(function(d, i) {
+                                return x(i);
                             })
-                            .y(function(d) {
+                            .y(function(d, i) {
                                 return y(d);
                             });
 
-                        return line(data);
+                        d3.select("#mapSvg")
+                            .append("path")
+                            .attr("d", line(data))
+                            .attr("class", "sparkline")
+                            .attr("transform",
+                            "translate(" + (center.x + 10) + "," + (center.y + 60) + ")");
+
+                        d3.select("#mapSvg")
+                            .append("circle")
+                            .attr("r", 2)
+                            .attr("cx", x(year))
+                            .attr("cy", y(data[year]))
+                            .attr("class", "sparkline-point")
+                            .attr("transform",
+                            "translate(" + (center.x + 10) + "," + (center.y + 60) + ")");
                     }
 
                     function renderSelected(element) {
@@ -127,8 +141,6 @@ angular.module('d3Directives').directive(
                             var color = d3.interpolateLab("#008000", "#c83a22");
                             var ds = shapeConnector.sectionedConnector(center, select1[0][0], select2[0][0], sections);
 
-                            console.log(ds);
-
                             d3.select("#mapSvg")
                                 .insert("g", ":first-child")
                                 .attr("class", "connector")
@@ -137,7 +149,6 @@ angular.module('d3Directives').directive(
                                 .enter()
                                 .append("path")
                                 .style("stroke", function(d,i) {
-                                    console.log(i);
                                     return color(i / sections);
                                 })
                                 .style("fill", function(d,i) {
@@ -211,14 +222,8 @@ angular.module('d3Directives').directive(
                                 .text(scope.$parent.data['Base Rate'])
                                 .attr("class", "info");
 
-                            d3.select("#mapSvg")
-                                .append("path")
-                                .attr("d", getSparkline([1,2,3,4,3,2,1], 80, 30))
-                                .attr("class", "sparkline")
-                                .attr("transform",
-                                      "translate(" + (center1.x + 10) + "," + (center1.y + 60) + ")");
+                            getSparkline([1,2,3,4,3,2,1,4,6,8,9,4,3], 80, 30, 4, center1);
 
-                           console.log( d3.selectAll(".connector"));
                         } else {
                             select1.classed('selected', false);
                             select2.classed('selected', false);
