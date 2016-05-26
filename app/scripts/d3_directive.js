@@ -16,6 +16,56 @@ angular.module('d3Directives').directive(
                     var center = {x: width/2, y: height/2};
                     var sections = 50;
 
+                    function appendTooltipShape(selection, width, height, x, y, orientation, cornerRadius, data, year) {
+                        var rotationMap = {
+                            bottom: 180,
+                            right: 90,
+                            top: 0,
+                            left: 270
+                        };
+
+                        var rot = rotationMap[orientation];
+                        var transX, transY;
+                        var tipCoeff = 0.125;
+
+                        if (orientation == 'bottom') {
+                            transX = x + (width / 2);
+                            transY = y + height + (tipCoeff * height);
+                        } else if (orientation == 'top') {
+                            transX = x - (width / 2);
+                            transY = y - height - (tipCoeff * height);
+                        } else if (orientation == 'left') {
+                            transX = x - width - (tipCoeff * height);
+                            transY = y + height/2;
+                        } else {
+                            transX = x + width + (tipCoeff * height);
+                            transY = y - height/2;
+                        }
+
+                        var d = 'M' + (width / 2) + ' ' + (height + (tipCoeff * height)) +
+                            'L' + ((width / 2) + (width * tipCoeff)) + ' ' + height +
+                            'L' + (width - cornerRadius) + ' ' + height +
+                            'Q' + width + ' ' + height + ' ' + width + ' ' + (height - cornerRadius) +
+                            'L' + width + ' ' + (0 + cornerRadius) +
+                            'Q' + width + ' ' + 0 + ' ' + (width - cornerRadius) + ' ' + 0 +
+                            'L' + (0 + cornerRadius) + ' ' + 0 +
+                            'Q' + 0 + ' ' + 0 + ' ' + 0 + ' ' + (0 + cornerRadius) +
+                            'L' + 0 + ' ' + (height - cornerRadius) +
+                            'Q' + 0 + ' ' + height + ' ' + (0 + cornerRadius) + ' ' + height +
+                            'L' + ((width / 2) - (width * tipCoeff)) + ' ' + height +
+                            'Z';
+
+                        var g = selection.append('g')
+                            .attr('transform', 'translate(' + transX + ',' + transY + ')');
+
+                        g.append('path')
+                            .attr('d', d)
+                            .attr("class", "svg-tooltip")
+                            .attr("transform", 'rotate(' + rot + ')');
+
+                        appendSparkline(g, data, width, height, year);
+                    }
+
                     function renderFromScope() {
                         d3.select("#mapSvg").remove();
 
@@ -100,7 +150,7 @@ angular.module('d3Directives').directive(
                     /**
                      * Return path element representing sparkline for data.
                      */
-                    function getSparkline(data, width, height, year, center) {
+                    function appendSparkline(selection, data, width, height, year) {
                         var domain = d3.extent(data);
                         console.log(domain);
                         var x = d3.scale.linear().domain([0, data.length]).range([0, width]);
@@ -114,21 +164,20 @@ angular.module('d3Directives').directive(
                                 return y(d);
                             });
 
-                        d3.select("#mapSvg")
+                        selection
                             .append("path")
                             .attr("d", line(data))
                             .attr("class", "sparkline")
                             .attr("transform",
-                            "translate(" + (center.x + 10) + "," + (center.y + 60) + ")");
-
-                        d3.select("#mapSvg")
+                            "translate(" + (width * .10) + "," + (height * .60) + ")");
+                        selection
                             .append("circle")
                             .attr("r", 2)
                             .attr("cx", x(year))
                             .attr("cy", y(data[year]))
                             .attr("class", "sparkline-point")
                             .attr("transform",
-                            "translate(" + (center.x + 10) + "," + (center.y + 60) + ")");
+                            "translate(" + (width * .10) + "," + (height * .60) + ")");
                     }
 
                     function renderSelected(element) {
@@ -195,34 +244,9 @@ angular.module('d3Directives').directive(
                                 .attr("cy", center.y)
                                 .attr("class", "dot");
 
-                            d3.select("#mapSvg")
-                                .append("rect")
-                                .attr("x", center1.x)
-                                .attr("y", center1.y)
-                                .attr("rx", 20)
-                                .attr("ry", 20)
-                                .attr("width", 100)
-                                .attr("height", 100)
-                                .attr("class", "svg-tooltip");
+                            appendTooltipShape(d3.select("#mapSvg"), 100, 100, center1.x, center1.y, 'bottom', 5,
+                                [1,2,3,4,3,2,1,4,6,8,9,4,3], 4);
 
-                            d3.select("#mapSvg")
-                                .append("rect")
-                                .attr("x", center2.x)
-                                .attr("rx", 20)
-                                .attr("ry", 20)
-                                .attr("y", center2.y)
-                                .attr("width", 100)
-                                .attr("height", 100)
-                                .attr("class", "svg-tooltip");
-
-                            d3.select("#mapSvg")
-                                .append("text")
-                                .attr("x", center1.x + 50)
-                                .attr("y", center1.y + 40)
-                                .text(scope.$parent.data['Base Rate'])
-                                .attr("class", "info");
-
-                            getSparkline([1,2,3,4,3,2,1,4,6,8,9,4,3], 80, 30, 4, center1);
 
                         } else {
                             select1.classed('selected', false);
