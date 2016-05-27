@@ -16,44 +16,63 @@ angular.module('d3Directives').directive(
                     var center = {x: width/2, y: height/2};
                     var sections = 50;
 
-                    function appendTooltipShape(selection, width, height, x, y, orientation, cornerRadius, data, year) {
-                        var rotationMap = {
-                            bottom: 180,
-                            right: 90,
-                            top: 0,
-                            left: 270
-                        };
+                    function getTipSegment(position, orientation, width, height, tipCoeff) {
+                        if (position !== orientation) {
+                            return '';
+                        }
+                        if (orientation == 'top') {
+                            return ('L' + ((width / 2) - (width * tipCoeff)) + ' ' + height +
+                            'L' + (width / 2) + ' ' + (height + (tipCoeff * height)) +
+                            'L' + ((width / 2) + (width * tipCoeff)) + ' ' + height);
+                        } else if (orientation == 'right') {
+                            return ('L' + width + ' ' + ((height / 2) + (height * tipCoeff)) +
+                            'L' + (width + (width * tipCoeff)) + ' ' + (height / 2) +
+                            'L' + width + ' ' + ((height / 2) - (height * tipCoeff)));
+                        } else if (orientation == 'bottom') {
+                            return ('L' + ((width / 2) + (width * tipCoeff)) + ' ' + 0 +
+                            'L' + (width / 2) + ' ' + (0 - (tipCoeff * height)) +
+                            'L' + ((width / 2) - (width * tipCoeff)) + ' ' + 0);
+                        } else if (orientation == 'left') {
+                            return ('L' + 0 + ' ' + ((height / 2) - (height * tipCoeff)) +
+                            'L' + (0 - (width * tipCoeff)) + ' ' + (height / 2) +
+                            'L' + 0 + ' ' + ((height / 2) + (height * tipCoeff)));
+                        }
+                    }
 
-                        var rot = rotationMap[orientation];
+                    function appendTooltipShape(selection, width, height, x, y, orientation, cornerRadius, data, year) {
+
                         var transX, transY;
                         var tipCoeff = 0.125;
 
                         if (orientation == 'bottom') {
-                            transX = x + (width / 2);
-                            transY = y + height + (tipCoeff * height);
+                            transX = x - (width / 2);
+                            transY = y + (tipCoeff * height);
                         } else if (orientation == 'top') {
                             transX = x - (width / 2);
                             transY = y - height - (tipCoeff * height);
-                        } else if (orientation == 'left') {
-                            transX = x - width - (tipCoeff * height);
+                        } else if (orientation == 'right') {
+                            transX = x + (tipCoeff * height);
                             transY = y + height/2;
                         } else {
-                            transX = x + width + (tipCoeff * height);
+                            transX = x - width - (tipCoeff * height);
                             transY = y - height/2;
                         }
 
-                        var d = 'M' + (width / 2) + ' ' + (height + (tipCoeff * height)) +
-                            'L' + ((width / 2) + (width * tipCoeff)) + ' ' + height +
-                            'L' + (width - cornerRadius) + ' ' + height +
-                            'Q' + width + ' ' + height + ' ' + width + ' ' + (height - cornerRadius) +
-                            'L' + width + ' ' + (0 + cornerRadius) +
-                            'Q' + width + ' ' + 0 + ' ' + (width - cornerRadius) + ' ' + 0 +
-                            'L' + (0 + cornerRadius) + ' ' + 0 +
-                            'Q' + 0 + ' ' + 0 + ' ' + 0 + ' ' + (0 + cornerRadius) +
-                            'L' + 0 + ' ' + (height - cornerRadius) +
-                            'Q' + 0 + ' ' + height + ' ' + (0 + cornerRadius) + ' ' + height +
-                            'L' + ((width / 2) - (width * tipCoeff)) + ' ' + height +
-                            'Z';
+
+                        var d = 'M' + (0 + cornerRadius) + ' ' + height +
+                        getTipSegment('top', orientation, width, height, tipCoeff) +
+                        'L' + (width - cornerRadius) + ' ' + height +
+                        'Q' + width + ' ' + height + ' ' + width + ' ' + (height - cornerRadius) +
+                        getTipSegment('right', orientation, width, height, tipCoeff) +
+                        'L' + width + ' ' + (0 + cornerRadius) +
+                        'Q' + width + ' ' + 0 + ' ' + (width - cornerRadius) + ' ' + 0 +
+                        getTipSegment('bottom', orientation, width, height, tipCoeff) +
+                        'L' + (0 + cornerRadius) + ' ' + 0 +
+                        'Q' + 0 + ' ' + 0 + ' ' + 0 + ' ' + (0 + cornerRadius) +
+                        getTipSegment('left', orientation, width, height, tipCoeff) +
+                        'L' + 0 + ' ' + (height - cornerRadius) +
+                        'Q' + 0 + ' ' + height + ' ' + (0 + cornerRadius) + ' ' + height +
+                        'Z';
 
                         var g = selection.append('g')
                             .attr('transform', 'translate(' + transX + ',' + transY + ')');
@@ -61,7 +80,7 @@ angular.module('d3Directives').directive(
                         g.append('path')
                             .attr('d', d)
                             .attr("class", "svg-tooltip")
-                            .attr("transform", 'rotate(' + rot + ')');
+                            ;
 
                         appendSparkline(g, data, width, height, year);
                     }
@@ -153,8 +172,8 @@ angular.module('d3Directives').directive(
                     function appendSparkline(selection, data, width, height, year) {
                         var domain = d3.extent(data);
                         console.log(domain);
-                        var x = d3.scale.linear().domain([0, data.length]).range([0, width]);
-                        var y = d3.scale.linear().domain(domain).range([height, 0]);
+                        var x = d3.scale.linear().domain([0, data.length]).range([width*0.1, width*0.9]);
+                        var y = d3.scale.linear().domain(domain).range([height*0.4, height*0.2]);
 
                         var line = d3.svg.line()
                             .x(function(d, i) {
@@ -168,8 +187,7 @@ angular.module('d3Directives').directive(
                             .append("path")
                             .attr("d", line(data))
                             .attr("class", "sparkline")
-                            .attr("transform",
-                            "translate(" + (width * .10) + "," + (height * .60) + ")");
+                            .attr("transform", "translate(" + (width * .10) + "," + (height * .60) + ")");
                         selection
                             .append("circle")
                             .attr("r", 2)
@@ -245,6 +263,9 @@ angular.module('d3Directives').directive(
                                 .attr("class", "dot");
 
                             appendTooltipShape(d3.select("#mapSvg"), 100, 100, center1.x, center1.y, 'bottom', 5,
+                                [1,2,3,4,3,2,1,4,6,8,9,4,3], 4);
+
+                            appendTooltipShape(d3.select("#mapSvg"), 100, 100, center1.x, center1.y, 'top', 5,
                                 [1,2,3,4,3,2,1,4,6,8,9,4,3], 4);
 
 
