@@ -5,7 +5,7 @@ angular.module('d3Directives').directive(
     ['$window', '$compile', 'd3', 'queue', 'topojson', 'tppProjection', 'shapeConnector',
         function ($window, $compile, d3, queue, topojson, tppProjection, shapeConnector) {
             return {
-                restrict: 'A',
+                restrict: 'E',
                 scope: true,
                 link: function (scope, element, attr) {
 
