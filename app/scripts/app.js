@@ -22,7 +22,7 @@ App.controller('MapController', ['$scope', '$timeout', 'd3', '$routeParams', '$l
     function ($scope, $timeout, d3, $routeParams, $location, $route, $firebaseObject) {
         //var ref = new Firebase('https://incandescent-fire-3940.firebaseio.com/');
         var authenticated = false;
-        $scope.htsCode = ["1011000", ""];
+        $scope.htsCode = ["91082080","Watch movements, complete and assembled, with automatic winding, 17 jewels or less"];
 
         function queryAndRenderForHts(htsCode) {
             if (!htsCode) {

@@ -247,18 +247,23 @@
                 return Math.sqrt(Math.pow(pointA.x - pointB.x, 2) + Math.pow(pointA.y - pointB.y, 2));
             }
 
+            /**
+             * Law of cosines
+             *
+             * arccos((P12^2 + P13^2 - P23^2) / (2 * P12 * P13))
+             */
             function getAngle(pathPoint, connectorCentroid, shapeCentroid) {
                 var numerator = Math.pow(dist(pathPoint, connectorCentroid), 2) + Math.pow(dist(pathPoint, shapeCentroid), 2) -
                     Math.pow(dist(connectorCentroid, shapeCentroid), 2);
-                var denominator = 2 * Math.pow(dist(pathPoint, connectorCentroid), 2) * Math.pow(dist(pathPoint, shapeCentroid), 2);
+                var denominator = 2 * dist(pathPoint, connectorCentroid) * dist(pathPoint, shapeCentroid);
                 return Math.acos(numerator / denominator);
             }
 
             function determinant(connectorCentroid, shapeCentroid, queryPoint) {
                 //(Bx - Ax) * (Y - Ay) - (By - Ay) * (X - Ax)
-                return ((shapeCentroid.x - connectorCentroid.x) *
-                ((queryPoint.y - connectorCentroid.y) - (shapeCentroid.y - connectorCentroid.y)) *
-                (queryPoint.x - connectorCentroid.x));
+                return (shapeCentroid.x - connectorCentroid.x) *
+                (queryPoint.y - connectorCentroid.y) - (shapeCentroid.y - connectorCentroid.y) *
+                (queryPoint.x - connectorCentroid.x);
             }
 
             function boundingBox(path) {
@@ -283,7 +288,8 @@
                 getBoundingCenter: getBoundingCenter,
                 getBoundingBox: boundingBox,
                 sectionedConnector: sectionedConnector,
-                getAngle: getAngle
+                getAngle: getAngle,
+                determinant: determinant
             };
 
         }])

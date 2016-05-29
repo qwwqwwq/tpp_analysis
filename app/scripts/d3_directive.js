@@ -16,6 +16,21 @@ angular.module('d3Directives').directive(
                     var center = {x: width/2, y: height/2};
                     var sections = 50;
 
+                    function getOrientation(tipCenter, center) {
+                        var piOver2 = Math.PI / 2;
+                        var angle = shapeConnector.getAngle(center, {x:0, y:0}, tipCenter);
+                        var determinant = shapeConnector.determinant({x:0, y:0}, {x:width, y:height}, tipCenter);
+                        if (angle < piOver2 && determinant < 0) {
+                            return "top";
+                        } else if (angle >= piOver2 && angle <= Math.PI && determinant < 0) {
+                            return "right";
+                        } else if (angle < piOver2 && determinant >= 0) {
+                            return "left";
+                        } else {
+                            return "bottom";
+                        }
+                    }
+
                     function getTipSegment(position, orientation, width, height, tipCoeff) {
                         if (position !== orientation) {
                             return '';
@@ -25,17 +40,17 @@ angular.module('d3Directives').directive(
                             'L' + (width / 2) + ' ' + (height + (tipCoeff * height)) +
                             'L' + ((width / 2) + (width * tipCoeff)) + ' ' + height);
                         } else if (orientation == 'right') {
-                            return ('L' + width + ' ' + ((height / 2) + (height * tipCoeff)) +
-                            'L' + (width + (width * tipCoeff)) + ' ' + (height / 2) +
-                            'L' + width + ' ' + ((height / 2) - (height * tipCoeff)));
+                            return ('L' + 0 + ' ' + ((height / 2) - (height * tipCoeff)) +
+                            'L' + (0 - (width * tipCoeff)) + ' ' + (height / 2) +
+                            'L' + 0 + ' ' + ((height / 2) + (height * tipCoeff)));
                         } else if (orientation == 'bottom') {
                             return ('L' + ((width / 2) + (width * tipCoeff)) + ' ' + 0 +
                             'L' + (width / 2) + ' ' + (0 - (tipCoeff * height)) +
                             'L' + ((width / 2) - (width * tipCoeff)) + ' ' + 0);
                         } else if (orientation == 'left') {
-                            return ('L' + 0 + ' ' + ((height / 2) - (height * tipCoeff)) +
-                            'L' + (0 - (width * tipCoeff)) + ' ' + (height / 2) +
-                            'L' + 0 + ' ' + ((height / 2) + (height * tipCoeff)));
+                            return ('L' + width + ' ' + ((height / 2) + (height * tipCoeff)) +
+                            'L' + (width + (width * tipCoeff)) + ' ' + (height / 2) +
+                            'L' + width + ' ' + ((height / 2) - (height * tipCoeff)));
                         }
                     }
 
@@ -52,7 +67,7 @@ angular.module('d3Directives').directive(
                             transY = y - height - (tipCoeff * height);
                         } else if (orientation == 'right') {
                             transX = x + (tipCoeff * height);
-                            transY = y + height/2;
+                            transY = y - height/2;
                         } else {
                             transX = x - width - (tipCoeff * height);
                             transY = y - height/2;
@@ -63,18 +78,19 @@ angular.module('d3Directives').directive(
                         getTipSegment('top', orientation, width, height, tipCoeff) +
                         'L' + (width - cornerRadius) + ' ' + height +
                         'Q' + width + ' ' + height + ' ' + width + ' ' + (height - cornerRadius) +
-                        getTipSegment('right', orientation, width, height, tipCoeff) +
+                        getTipSegment('left', orientation, width, height, tipCoeff) +
                         'L' + width + ' ' + (0 + cornerRadius) +
                         'Q' + width + ' ' + 0 + ' ' + (width - cornerRadius) + ' ' + 0 +
                         getTipSegment('bottom', orientation, width, height, tipCoeff) +
                         'L' + (0 + cornerRadius) + ' ' + 0 +
                         'Q' + 0 + ' ' + 0 + ' ' + 0 + ' ' + (0 + cornerRadius) +
-                        getTipSegment('left', orientation, width, height, tipCoeff) +
+                        getTipSegment('right', orientation, width, height, tipCoeff) +
                         'L' + 0 + ' ' + (height - cornerRadius) +
                         'Q' + 0 + ' ' + height + ' ' + (0 + cornerRadius) + ' ' + height +
                         'Z';
 
                         var g = selection.append('g')
+                            .attr('class', 'tooltip-group')
                             .attr('transform', 'translate(' + transX + ',' + transY + ')');
 
                         g.append('path')
@@ -89,8 +105,8 @@ angular.module('d3Directives').directive(
                         d3.select("#mapSvg").remove();
 
                         var projection = tppProjection
-                            .scale(1000)
-                            .translate([width / 1.5, height / 2]);
+                            .scale(900)
+                            .translate([width / 1.5, height / 2.2]);
 
                         var path = d3.geo.path()
                             .projection(projection);
@@ -266,10 +282,12 @@ angular.module('d3Directives').directive(
                             console.log(shapeConnector.getAngle(center, {x:0, y:0}, center2));
                             console.log(center, {x:0, y:0}, center2);
 
-                            appendTooltipShape(d3.select("#mapSvg"), 100, 100, center1.x, center1.y, 'bottom', 5,
+                            appendTooltipShape(d3.select("#mapSvg"), 100, 100, center1.x, center1.y,
+                                getOrientation(center1, center), 5,
                                 [1,2,3,4,3,2,1,4,6,8,9,4,3], 4);
 
-                            appendTooltipShape(d3.select("#mapSvg"), 100, 100, center1.x, center1.y, 'top', 5,
+                            appendTooltipShape(d3.select("#mapSvg"), 100, 100, center2.x, center2.y,
+                                getOrientation(center2, center), 5,
                                 [1,2,3,4,3,2,1,4,6,8,9,4,3], 4);
 
 
@@ -280,6 +298,7 @@ angular.module('d3Directives').directive(
                             d3.selectAll(".bbox").remove();
                             d3.selectAll(".dot").remove();
                             d3.selectAll(".info").remove();
+                            d3.selectAll(".tooltip-group").remove();
                             select2 = null;
                             select1 = element;
                         }
