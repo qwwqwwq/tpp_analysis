@@ -282,7 +282,8 @@
                 getBoundingBoxPoints: getBoundingBoxPoints,
                 getBoundingCenter: getBoundingCenter,
                 getBoundingBox: boundingBox,
-                sectionedConnector: sectionedConnector
+                sectionedConnector: sectionedConnector,
+                getAngle: getAngle
             };
 
         }])

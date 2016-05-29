@@ -173,7 +173,7 @@ angular.module('d3Directives').directive(
                         var domain = d3.extent(data);
                         console.log(domain);
                         var x = d3.scale.linear().domain([0, data.length]).range([width*0.1, width*0.9]);
-                        var y = d3.scale.linear().domain(domain).range([height*0.4, height*0.2]);
+                        var y = d3.scale.linear().domain(domain).range([height*0.9, height*0.7]);
 
                         var line = d3.svg.line()
                             .x(function(d, i) {
@@ -187,15 +187,14 @@ angular.module('d3Directives').directive(
                             .append("path")
                             .attr("d", line(data))
                             .attr("class", "sparkline")
-                            .attr("transform", "translate(" + (width * .10) + "," + (height * .60) + ")");
+                            ;
                         selection
                             .append("circle")
                             .attr("r", 2)
                             .attr("cx", x(year))
                             .attr("cy", y(data[year]))
                             .attr("class", "sparkline-point")
-                            .attr("transform",
-                            "translate(" + (width * .10) + "," + (height * .60) + ")");
+                            ;
                     }
 
                     function renderSelected(element) {
@@ -261,6 +260,11 @@ angular.module('d3Directives').directive(
                                 .attr("cx", center.x)
                                 .attr("cy", center.y)
                                 .attr("class", "dot");
+
+                            console.log(shapeConnector.getAngle(center, {x:0, y:0}, center1));
+                            console.log(center, {x:0, y:0}, center1);
+                            console.log(shapeConnector.getAngle(center, {x:0, y:0}, center2));
+                            console.log(center, {x:0, y:0}, center2);
 
                             appendTooltipShape(d3.select("#mapSvg"), 100, 100, center1.x, center1.y, 'bottom', 5,
                                 [1,2,3,4,3,2,1,4,6,8,9,4,3], 4);
