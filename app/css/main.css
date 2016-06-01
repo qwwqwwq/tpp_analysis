@@ -19,10 +19,6 @@ rect {
     stroke: #000;
 }
 
-.connector {
-    stroke: #000;
-}
-
 .bbox {
     stroke: #ff1a1c;
     fill: none;

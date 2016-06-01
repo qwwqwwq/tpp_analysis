@@ -13,13 +13,25 @@ angular.module('d3Directives').directive(
                     var select1 = null, select2 = null;
                     var width = 840,
                         height = 750;
-                    var center = {x: width/2, y: height/2};
+                    var center = {x: width / 2, y: height / 2};
                     var sections = 50;
+
+                    function getNumber(string) {
+                        return +string.replace(/[^0-9.]/g,'');
+                    }
+
+                    function getNumberArray(arr) {
+                        var out = [];
+                        arr.forEach(function(x) {
+                            out.push(getNumber(x));
+                        });
+                        return out;
+                    }
 
                     function getOrientation(tipCenter, center) {
                         var piOver2 = Math.PI / 2;
-                        var angle = shapeConnector.getAngle(center, {x:0, y:0}, tipCenter);
-                        var determinant = shapeConnector.determinant({x:0, y:0}, {x:width, y:height}, tipCenter);
+                        var angle = shapeConnector.getAngle(center, {x: 0, y: 0}, tipCenter);
+                        var determinant = shapeConnector.determinant({x: 0, y: 0}, {x: width, y: height}, tipCenter);
                         if (angle < piOver2 && determinant < 0) {
                             return "top";
                         } else if (angle >= piOver2 && angle <= Math.PI && determinant < 0) {
@@ -67,27 +79,27 @@ angular.module('d3Directives').directive(
                             transY = y - height - (tipCoeff * height);
                         } else if (orientation == 'right') {
                             transX = x + (tipCoeff * height);
-                            transY = y - height/2;
+                            transY = y - height / 2;
                         } else {
                             transX = x - width - (tipCoeff * height);
-                            transY = y - height/2;
+                            transY = y - height / 2;
                         }
 
 
                         var d = 'M' + (0 + cornerRadius) + ' ' + height +
-                        getTipSegment('top', orientation, width, height, tipCoeff) +
-                        'L' + (width - cornerRadius) + ' ' + height +
-                        'Q' + width + ' ' + height + ' ' + width + ' ' + (height - cornerRadius) +
-                        getTipSegment('left', orientation, width, height, tipCoeff) +
-                        'L' + width + ' ' + (0 + cornerRadius) +
-                        'Q' + width + ' ' + 0 + ' ' + (width - cornerRadius) + ' ' + 0 +
-                        getTipSegment('bottom', orientation, width, height, tipCoeff) +
-                        'L' + (0 + cornerRadius) + ' ' + 0 +
-                        'Q' + 0 + ' ' + 0 + ' ' + 0 + ' ' + (0 + cornerRadius) +
-                        getTipSegment('right', orientation, width, height, tipCoeff) +
-                        'L' + 0 + ' ' + (height - cornerRadius) +
-                        'Q' + 0 + ' ' + height + ' ' + (0 + cornerRadius) + ' ' + height +
-                        'Z';
+                            getTipSegment('top', orientation, width, height, tipCoeff) +
+                            'L' + (width - cornerRadius) + ' ' + height +
+                            'Q' + width + ' ' + height + ' ' + width + ' ' + (height - cornerRadius) +
+                            getTipSegment('left', orientation, width, height, tipCoeff) +
+                            'L' + width + ' ' + (0 + cornerRadius) +
+                            'Q' + width + ' ' + 0 + ' ' + (width - cornerRadius) + ' ' + 0 +
+                            getTipSegment('bottom', orientation, width, height, tipCoeff) +
+                            'L' + (0 + cornerRadius) + ' ' + 0 +
+                            'Q' + 0 + ' ' + 0 + ' ' + 0 + ' ' + (0 + cornerRadius) +
+                            getTipSegment('right', orientation, width, height, tipCoeff) +
+                            'L' + 0 + ' ' + (height - cornerRadius) +
+                            'Q' + 0 + ' ' + height + ' ' + (0 + cornerRadius) + ' ' + height +
+                            'Z';
 
                         var g = selection.append('g')
                             .attr('class', 'tooltip-group')
@@ -95,10 +107,16 @@ angular.module('d3Directives').directive(
 
                         g.append('path')
                             .attr('d', d)
-                            .attr("class", "svg-tooltip")
-                            ;
+                            .attr("class", "svg-tooltip");
+                        g.append("text")
+                            .text(data[year])
+                            .style("stroke", "white")
+                            .style("fill", "white")
+                            .style("text-anchor", "middle")
+                            .attr("x", width / 2)
+                            .attr("y", height / 4);
 
-                        appendSparkline(g, data, width, height, year);
+                        appendSparkline(g, getNumberArray(data), width, height, year);
                     }
 
                     function renderFromScope() {
@@ -131,9 +149,9 @@ angular.module('d3Directives').directive(
                             .enter()
                             .append("path")
                             .attr("class", "mesh")
-                            /*.attr("id", function(d, i) {
-                             return d.properties.name.replace(/\s/g, '');
-                             })*/
+                            .attr("name", function(d, i) {
+                             return d.properties.name;
+                            })
                             .on("click", function (d, i) {
                                 renderSelected(d3.select(this));
                             })
@@ -188,29 +206,27 @@ angular.module('d3Directives').directive(
                     function appendSparkline(selection, data, width, height, year) {
                         var domain = d3.extent(data);
                         console.log(domain);
-                        var x = d3.scale.linear().domain([0, data.length]).range([width*0.1, width*0.9]);
-                        var y = d3.scale.linear().domain(domain).range([height*0.9, height*0.7]);
+                        var x = d3.scale.linear().domain([0, data.length]).range([width * 0.1, width * 0.9]);
+                        var y = d3.scale.linear().domain(domain).range([height * 0.9, height * 0.7]);
 
                         var line = d3.svg.line()
-                            .x(function(d, i) {
+                            .x(function (d, i) {
                                 return x(i);
                             })
-                            .y(function(d, i) {
+                            .y(function (d, i) {
                                 return y(d);
                             });
 
                         selection
                             .append("path")
                             .attr("d", line(data))
-                            .attr("class", "sparkline")
-                            ;
+                            .attr("class", "sparkline");
                         selection
                             .append("circle")
                             .attr("r", 2)
                             .attr("cx", x(year))
                             .attr("cy", y(data[year]))
-                            .attr("class", "sparkline-point")
-                            ;
+                            .attr("class", "sparkline-point");
                     }
 
                     function renderSelected(element) {
@@ -223,6 +239,7 @@ angular.module('d3Directives').directive(
                             var color = d3.interpolateLab("#008000", "#c83a22");
                             var ds = shapeConnector.sectionedConnector(center, select1[0][0], select2[0][0], sections);
 
+
                             d3.select("#mapSvg")
                                 .insert("g", ":first-child")
                                 .attr("class", "connector")
@@ -230,17 +247,18 @@ angular.module('d3Directives').directive(
                                 .data(ds)
                                 .enter()
                                 .append("path")
-                                .style("stroke", function(d,i) {
+                                .style("stroke", function (d, i) {
                                     return color(i / sections);
                                 })
-                                .style("fill", function(d,i) {
+                                .style("fill", function (d, i) {
                                     return color(i / sections);
                                 })
-                                .attr("d", function(d) {
+                                .attr("d", function (d) {
                                     return d;
                                 })
                                 .attr("class", "connector");
 
+                            /*
                             d3.select("#mapSvg")
                                 .append("path")
                                 .attr("d", shapeConnector.getBoundingBox(select1[0][0]))
@@ -249,21 +267,20 @@ angular.module('d3Directives').directive(
                             d3.select("#mapSvg")
                                 .append("path")
                                 .attr("d", shapeConnector.getBoundingBox(select2[0][0]))
-                                .attr("class", "bbox");
+                                .attr("class", "bbox");*/
 
 
                             var center1 = shapeConnector.getBoundingCenter(select1[0][0]);
-                            d3.select("#mapSvg")
+                            /*d3.select("#mapSvg")
                                 .append("circle")
                                 .attr("r", "5")
                                 .attr("cx", center1.x)
                                 .attr("cy", center1.y)
-                                .attr("class", "dot");
-
+                                .attr("class", "dot");*/
 
 
                             var center2 = shapeConnector.getBoundingCenter(select2[0][0]);
-                            d3.select("#mapSvg")
+                            /*d3.select("#mapSvg")
                                 .append("circle")
                                 .attr("r", "5")
                                 .attr("cx", center2.x)
@@ -275,20 +292,34 @@ angular.module('d3Directives').directive(
                                 .attr("r", "5")
                                 .attr("cx", center.x)
                                 .attr("cy", center.y)
-                                .attr("class", "dot");
+                                .attr("class", "dot");*/
 
-                            console.log(shapeConnector.getAngle(center, {x:0, y:0}, center1));
-                            console.log(center, {x:0, y:0}, center1);
-                            console.log(shapeConnector.getAngle(center, {x:0, y:0}, center2));
-                            console.log(center, {x:0, y:0}, center2);
+                            console.log(shapeConnector.getAngle(center, {x: 0, y: 0}, center1));
+                            console.log(center, {x: 0, y: 0}, center1);
+                            console.log(shapeConnector.getAngle(center, {x: 0, y: 0}, center2));
+                            console.log(center, {x: 0, y: 0}, center2);
 
-                            appendTooltipShape(d3.select("#mapSvg"), 100, 100, center1.x, center1.y,
-                                getOrientation(center1, center), 5,
-                                [1,2,3,4,3,2,1,4,6,8,9,4,3], 4);
+                            appendTooltipShape(d3.select("#mapSvg"),
+                                100,
+                                100,
+                                center1.x,
+                                center1.y,
+                                getOrientation(center1, center),
+                                5,
+                                scope.$parent.data[select1[0][0].attributes.name.nodeValue],
+                                4
+                            );
 
-                            appendTooltipShape(d3.select("#mapSvg"), 100, 100, center2.x, center2.y,
-                                getOrientation(center2, center), 5,
-                                [1,2,3,4,3,2,1,4,6,8,9,4,3], 4);
+                            appendTooltipShape(d3.select("#mapSvg"),
+                                100,
+                                100,
+                                center2.x,
+                                center2.y,
+                                getOrientation(center2, center),
+                                5,
+                                scope.$parent.data[select2[0][0].attributes.name.nodeValue],
+                                4
+                            );
 
 
                         } else {

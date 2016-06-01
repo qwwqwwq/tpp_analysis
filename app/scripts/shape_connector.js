@@ -91,14 +91,6 @@
                     getPoints(pathB),
                     connectorCentroid);
 
-                var distances = [
-                    dist(pointsA[0], pointsB[0]),
-                    dist(pointsA[0], pointsB[1]),
-                    dist(pointsA[1], pointsB[0]),
-                    dist(pointsA[1], pointsB[1])];
-
-                var idx = indexOfMin(distances);
-
                 function intersects(minorA, minorB, majorA, majorB) {
                     var intersections = new Bezier(minorA,
                         halfwayPoint(minorA, connectorCentroid),
@@ -111,22 +103,45 @@
                     return !!intersections.length;
                 }
 
-                if (idx == 0 && !intersects(pointsA[0], pointsB[0], pointsA[1], pointsB[1])) {
+                var distances = [
+                    dist(pointsA[0], pointsB[0]),
+                    dist(pointsA[0], pointsB[1]),
+                    dist(pointsA[1], pointsB[0]),
+                    dist(pointsA[1], pointsB[1])];
+
+                var intersections = [intersects(pointsA[0], pointsB[0], pointsA[1], pointsB[1]),
+                    intersects(pointsA[0], pointsB[1], pointsA[1], pointsB[0]),
+                    intersects(pointsA[1], pointsB[0], pointsA[0], pointsB[1]),
+                    intersects(pointsA[1], pointsB[1], pointsA[0], pointsB[0])];
+
+                var minDistance = Infinity;
+                var idx;
+                for (var i = 0; i < distances.length; i++) {
+                    if (!intersections[i]) {
+                        if (distances[i] < minDistance) {
+                            minDistance = distances[i];
+                            idx = i;
+                        }
+                    }
+                }
+
+
+                if (idx == 0) {
                     minorA = pointsA[0];
                     minorB = pointsB[0];
                     majorA = pointsA[1];
                     majorB = pointsB[1];
-                } else if (idx == 1 && !intersects(pointsA[0], pointsB[1], pointsA[1], pointsB[0])) {
+                } else if (idx == 1) {
                     minorA = pointsA[0];
                     minorB = pointsB[1];
                     majorA = pointsA[1];
                     majorB = pointsB[0];
-                } else if (idx == 2 && !intersects(pointsA[1], pointsB[0], pointsA[0], pointsB[1])) {
+                } else if (idx == 2) {
                     minorA = pointsA[1];
                     minorB = pointsB[0];
                     majorA = pointsA[0];
                     majorB = pointsB[1];
-                } else { //if (idx == 3 && !intersects(pointsA[1], pointsB[1], pointsA[0], pointsB[0])) {
+                } else {
                     minorA = pointsA[1];
                     minorB = pointsB[1];
                     majorA = pointsA[0];

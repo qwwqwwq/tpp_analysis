@@ -20,7 +20,7 @@ var App = angular.module('App', ['d3Directives', 'ngRoute', 'ui.bootstrap', 'fir
 
 App.controller('MapController', ['$scope', '$timeout', 'd3', '$routeParams', '$location', '$route', '$firebaseObject',
     function ($scope, $timeout, d3, $routeParams, $location, $route, $firebaseObject) {
-        //var ref = new Firebase('https://incandescent-fire-3940.firebaseio.com/');
+        var ref = new Firebase('https://incandescent-fire-3940.firebaseio.com/');
         var authenticated = false;
         $scope.htsCode = ["91082080","Watch movements, complete and assembled, with automatic winding, 17 jewels or less"];
 
@@ -29,27 +29,23 @@ App.controller('MapController', ['$scope', '$timeout', 'd3', '$routeParams', '$l
                 return;
             }
             console.log(htsCode);
-            /*
             ref.orderByChild("HTS 8 (2010)").equalTo(htsCode[0]).on("child_added", function (snapshot) {
                 $scope.data = snapshot.val();
                 console.log($scope.data);
             }, function (cancel) {
                 console.error(cancel);
             });
-            */
         }
 
-        /*
         ref.authAnonymously(function (error, authData) {
             if (error) {
                 console.log("Authentication Failed!", error);
             } else {
                 console.log("Authenticated successfully with payload:", authData);
                 authenticated = true;
-                queryAndRenderForHts("1011000");
+                queryAndRenderForHts($scope.htsCode[0]);
             }
-        });*/
-        $scope.data = {'Base Rate': '10.0%'};
+        });
 
         $scope.$watch('htsCode', function (oldVal, newVal) {
             queryAndRenderForHts($scope.htsCode);
